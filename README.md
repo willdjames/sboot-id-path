@@ -22,3 +22,13 @@ Gosto de usar ints ou longs como índice clusterizado (geralmente chave primári
 5. **Parece ser uma solução simples, usar POST? Mas talvez o ID já pode ter vindo no retorno no LOCATION na criação do recurso.**   
 Se você não quiser expor nenhum tipo de ID, basta usar POST. Sim, eu sei... Tranquilo e merda, mas se isso te preocupa, então não use GET para passar a string de consulta. Use Post e no corpo envie o modelo ou id.  
 
+## Exemplo
+
+Na branch ```id-encrypt``` exemplo implementado com Cyper combinado com ```Base64```. É feito a codficação do id gerado, numerico,
+podendo ser sequencial, e retornado o base64 no header ```Location```.  
+  
+Na classe de teste mostra sendo recuperado o Location e feito o ```GET``` com o id encriptado no Location.  
+  
+Esta é só uma das possiveis formas possiveis de proteger um identificador único, gerado sequencialmente.  
+   
+Esta estratégia pode ser bem aproveitada em Gateways ou em APIs de borda, expostas para internet.

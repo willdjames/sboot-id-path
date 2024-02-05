@@ -1,8 +1,5 @@
 package com.app;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -28,7 +25,7 @@ public class ProdutoResourceTests {
     
     private final String nomeProdutoInserido = "Nome produto AbC";
     
-    
+
     void steup() {
     }
 
