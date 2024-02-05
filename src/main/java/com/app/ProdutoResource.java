@@ -21,6 +21,9 @@ public class ProdutoResource {
 
     private Map<Integer, Produto> produtos;
 
+    private static final String KEY = "Bar12345Bar12345"; // 128 bit key
+    
+    private static final String INIT_VECTOR = "RandomInitVector"; // 16 bytes IV
 
     public ProdutoResource() {
         if(Objects.isNull(produtos)) {
@@ -41,9 +44,19 @@ public class ProdutoResource {
     public ResponseEntity<Object> post(@RequestBody Produto produto) {
         int id = this.getIdAleatorio();
 
+        String idEncrypt = Encryptor.encrypt(KEY, INIT_VECTOR, String.valueOf(id));
+
         produtos.put(id, produto);
 
-        return ResponseEntity.created(URI.create("/produtos/"+id)).build();
+        return ResponseEntity.created(URI.create("/produtos/"+idEncrypt)).build();
+    }
+
+
+    @GetMapping(
+        produces = {"application/json"}
+    )
+    public ResponseEntity<Map<Integer, Produto>> getAll() {
+        return ResponseEntity.ok(produtos);
     }
 
 
@@ -51,7 +64,10 @@ public class ProdutoResource {
         path = "/{id}",
         produces = {"application/json"}
     )
-    public ResponseEntity<Produto> get(@PathVariable Integer id) {
-        return ResponseEntity.ok(produtos.get(id));
+    public ResponseEntity<Produto> get(@PathVariable String id) {
+
+        String idDecrypt = Encryptor.decrypt(KEY, INIT_VECTOR, id);
+
+        return ResponseEntity.ok(produtos.get(Integer.parseInt(idDecrypt)));
     }
 }

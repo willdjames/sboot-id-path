@@ -1,6 +1,8 @@
 package com.app;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -15,7 +17,6 @@ import io.restassured.response.Response;
 
 import org.apache.http.entity.ContentType;
 import org.hamcrest.Matchers;
-import org.hamcrest.core.Is;
 
 
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
@@ -25,6 +26,8 @@ public class ProdutoResourceTests {
 
     private String locationResponse;
     
+    private final String nomeProdutoInserido = "Nome produto AbC";
+    
     
     void steup() {
     }
@@ -32,39 +35,48 @@ public class ProdutoResourceTests {
 
     @Test
     @Order(1)
-    void testSalvarProdutoEsperadoStatus201() {
+    void test_salva_produto_esperado_status_201() {
 
-        Response response = RestAssured.given()
-        .contentType(ContentType.APPLICATION_JSON.toString())
-        .body(new Produto("Nome A", "Descrição B", 55.5d))
-        .when()
-        .post("/produtos");
+        Response response = RestAssured
+            .given()
+                .contentType(ContentType.APPLICATION_JSON.toString())
+                .body( new Produto(nomeProdutoInserido, "Descrição B", 55.5d) )
+            .when()
+                .post("/produtos");
         
         locationResponse = response.getHeader("Location");
         
-        System.out.println(locationResponse);
-        
         response
             .then()
-            .log().all()
-            .statusCode(201);
+                .log().all()
+                .statusCode(201);
     }
 
 
     @Test
     @Order(2)
-    void testRecuperarPeloHashIDProdutoInseridoEsperadoStatus200() {
-        String x = locationResponse;
-        System.out.println(x);
+    void tes_recupera_todos_produtos_esperado_status_200() {
         
         RestAssured
             .when()
-                .get(x)
+                .get("/produtos")
+            .then()
+                .log().all()
+                .statusCode(200);
+    }
+
+
+    @Test
+    @Order(3)
+    void test_recupera_pelo_hashID_produto_inserido_esperado_status_200() {
+        
+        RestAssured
+            .when()
+                .get(locationResponse)
             .then()
                 .log().all()
                 .statusCode(200)
-                .assertThat()
-                .body("nome", Is.is(Matchers.notNullValue()));
-
+            .assertThat()
+                .body("nome", Matchers.equalTo(nomeProdutoInserido));
     }
 }

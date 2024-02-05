@@ -2,7 +2,6 @@ package com.app;
 
 public class Produto {
 
-    public String hashID;
     public String nome;
     public String descricao;
     public double valor;
